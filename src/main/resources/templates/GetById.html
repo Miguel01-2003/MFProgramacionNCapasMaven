@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Formulario</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
+    <body class="container">
+        <br>
+        <div class="row">
+            <h1 class="display-1">Datos de usuario</h1>
+            <p class="lead"></p>
+        </div>
+        <br>
+        
+        <br>
+        
+        <form method="post" th:object="${usuario}" th:action="@{/usuario/form}">
+            <h4><i class="bi bi-people-fill"></i>Datos personales</h4><br>
+            <div class="row">
+                <div class="col-2">
+                   <label for="FotoUsuario" class="form-label fw-bold">Foto del usuario</label>
+                    <img id="FotoUsuario" src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" class="img-thumbnail"> 
+                </div>
+                <div class="col">
+<!--                    <button class="btn btn-outline-secondary" type="button" id="button-addon1">Navegador</button>
+                    <input type="text" class="form-control " placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">-->
+                </div>
+            </div>
+            
+            <br>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="Nombre" class="form-label fw-bold">Nombre</label>
+                    <input id="Nombre" type="text" class="form-control" placeholder="Nombre" th:field="*{Nombre}" >
+                </div>
+                <div class="col">
+                    <label for="ApellidoPaterno" class="form-label fw-bold">Apellido Paterno</label>
+                    <input id="ApellidoPaterno" type="text" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" >
+                </div>
+                <div class="col">
+                    <label for="ApellidoMaterno" class="form-label fw-bold">Apellido Materno</label>
+                    <input id="ApellidoMaterno" type="text" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoMaterno}" >
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">  
+                    <label for="Sexo" class="form-label fw-bold">Sexo</label><br>       
+                    <input type="radio" id="Hombre" name="Sexo" value="MA" th:field="*{Sexo}">
+                    <label for="Hombre">Hombre</label>
+                    <input type="radio" id="Mujer" name="Sexo" value="FE" th:field="*{Sexo}">
+                    <label for="Mujer">Mujer</label>
+                </div>
+                <div class="col">
+                    <label for="CURP" class="form-label fw-bold">CURP</label>
+                    <input id="CURP" type="text" class="form-control" placeholder="CURP" th:field="*{CURP}" >
+                </div>
+                <div class="col">
+                    <label for="FechaNacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
+                    <input id="FechaNacimiento" type="date" class="form-control"  th:field="*{FechaNacimiento}" >
+                </div>
+            </div>
+            <br>
+                <div>
+                    <h4><i class="bi bi-shield-lock-fill"></i>Acceso y contacto</h4><br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="UserName" class="form-label fw-bold">Username</label>
+                            <input id="UserName" type="text" class="form-control" placeholder="Username" th:field="*{UserName}" >
+                        </div>
+                        <div class="col">
+                            <label for="Email" class="form-label fw-bold">Email</label>
+                            <input id="Email" type="Email" class="form-control" placeholder="Email" th:field="*{Email}" >
+                        </div>
+                        <div class="col">
+                            <label for="Password" class="form-label fw-bold">Password</label>
+                            <input id="Password" type="Password" class="form-control" placeholder="Password" th:field="*{Password}" >
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="Telefono" class="form-label fw-bold">Telefono (10 Digitos)</label>
+                            <input id="Telefono" type="text" class="form-control" placeholder="Telefono" th:field="*{Telefono}" >
+                        </div>
+                        <div class="col">
+                            <label for="Celular" class="form-label fw-bold">Celular (10 Digitos)</label>
+                            <input id="Celular" type="text" class="form-control" placeholder="Celular" th:field="*{Celular}" >
+                        </div>
+                        <div class="col">
+                            <label for="Rol" class="form-label fw-bold">Rol</label><br>
+                            <select id="Rol" >
+                                <option value=0 selected>Seleccione un rol...</option>
+                                <option th:each="Rol :${roles}" th:value="${Rol.IdRol}" th:text="${Rol.Nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            <br>
+            <div class="row">
+                <h4><i class="bi bi-house-fill"></i>Direccion</h4><br>
+               <div class="col">
+                    <label for="Pais" class="form-label fw-bold">Pais</label><br>
+                    <select id="Pais" >
+                        <option value=0 selected>Seleccione un Pais...</option>
+                        <option th:each="Pais :${paises}" th:value="${Pais.IdPais}" th:text="${Pais.Nombre}"></option>
+                    </select>
+               </div>
+                <div class="col">
+                    <label for="Estado" class="form-label fw-bold">Estado</label>
+                    <input id="Estado" type="text" class="form-control" placeholder="Estado" >
+                </div>
+                <div class="col">
+                    <label for="Municipio" class="form-label fw-bold">Municipio</label>
+                    <input id="Municipio" type="text" class="form-control" placeholder="Municipio"  >
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <label for="Colonia" class="form-label fw-bold">Colonia</label>
+                        <input id="Colonia" type="text" class="form-control" placeholder="Colonia">
+                    </div>
+                    <div class="col">
+                        <label for="CodigoPostal" class="form-label fw-bold">Codigo Postal</label>
+                        <input id="CodigoPostal" type="text" class="form-control" placeholder="Codigo Postal">
+                    </div>
+                    <div class="col">
+                        <label for="Calle" class="form-label fw-bold">Calle</label>
+                        <input id="Calle" type="text" class="form-control" placeholder="Calle">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <label for="NumeroInterior" class="form-label fw-bold">Numero Interior (Opcional)</label>
+                        <input id="NumeroInterior" type="text" class="form-control" placeholder="Numero Interior">
+                    </div>
+                    <div class="col">
+                        <label for="NumeroExterior" class="form-label fw-bold">Numero Exterior</label>
+                        <input id="NumeroExterior" type="text" class="form-control" placeholder="Numero Exterior">
+                    </div>
+                    <div class="col">
+                        
+                    </div>
+                </div>
+                
+                
+            </div>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>GetAll</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-7">
+                <p class="fw-bold fs-5 text-center text-primary">Presione el boton para registrar un nuevo usuario</p>
+                </div>
+                <div class="col-sm-5">
+                    <button class="btn btn-success">Agregar usuario</button>
+                </div>
+            </div>
+            <table class="table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Usuario</th>
+                        <th>Datos de contacto</th>
+                        <th>Direcciones</th>
+                        <th>Estatus</th>
+                    </tr>  
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <th>
+                            <button type="button" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </button>
+                            <button type="button" class="btn btn-outline-danger">
+                                <i class="bi bi-trash3"></i> Eliminar
+                            </button>
+                        </th>
+                        <td th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|">
+                            
+                        </td>
+                        <td>
+                            <lb class="" th:text="${usuario.email}"></lb><br>
+                            <lb class="" th:text="${usuario.Telefono}"></lb>
+                        </td>
+                        <td>
+                            <div th:each="direccion: ${usuario.direcciones}">
+                                <lb class="" th:text="|Calle: ${direccion.Calle} ${direccion.NumeroExterior} ${direccion.Colonia.nombre} |"></lb>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
