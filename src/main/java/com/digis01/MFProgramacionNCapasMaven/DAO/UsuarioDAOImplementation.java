@@ -28,7 +28,8 @@ public class UsuarioDAOImplementation implements IUsuario{
     public Resultado GetAll(){
         Resultado resultado = new Resultado();
         
-        jdbcTemplate.execute("{CALL UsuarioDireccionGetAllSP(?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
+        try {
+            jdbcTemplate.execute("{CALL UsuarioDireccionGetAllSP(?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
             callableStatement.registerOutParameter(1, java.sql.Types.REF_CURSOR);
             callableStatement.execute();
             
@@ -61,11 +62,19 @@ public class UsuarioDAOImplementation implements IUsuario{
                     usuario.setIdUsuario(IdUsuario);
                     usuario.setNombre(resultSet.getString("Nombre"));
                     usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
-                    usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
+                    usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));//Opcional
                     usuario.setEmail(resultSet.getString("Email"));
                     usuario.setTelefono(resultSet.getString("Telefono"));
                     usuario.Rol.setNombre(resultSet.getString("Rol"));
+                    usuario.setImagen(resultSet.getString("Imagen"));
                     
+                    usuario.setCelular(resultSet.getString("Celular"));//Opcional
+                    usuario.setCURP(resultSet.getString("CURP"));//Opcional
+                    
+                    usuario.setUserName(resultSet.getString("UserName"));
+                    
+                    usuario.setSexo(resultSet.getString("Sexo"));
+                    usuario.setFechaNacimiento(resultSet.getDate("FechaNacimiento"));
                     int idDireccion = resultSet.getInt("IdDireccion");
                     if(idDireccion != 0){
                         usuario.Direcciones = new ArrayList<>();
@@ -99,6 +108,15 @@ public class UsuarioDAOImplementation implements IUsuario{
             
             return true;
         });
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        
         
         return resultado;
     }
@@ -113,18 +131,29 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.registerOutParameter(2, java.sql.Types.REF_CURSOR);
                 callableStatement.execute();
                 
-                ResultSet resultSet = (ResultSet)callableStatement.getObject(1);
+                ResultSet resultSet = (ResultSet)callableStatement.getObject(2);
                 if(resultSet.next()){
                     Usuario usuario = new Usuario();
                     usuario.Rol = new Rol();
                     
+                    usuario.setIdUsuario(IdUsuario);
                     usuario.setNombre(resultSet.getString("Nombre"));
                     usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
-                    usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
+                    usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));//Opcional
+                    usuario.setEmail(resultSet.getString("Email"));
+                    usuario.setTelefono(resultSet.getString("Telefono"));
+                    usuario.Rol.setNombre(resultSet.getString("Rol"));
+                    usuario.setImagen(resultSet.getString("Imagen"));
+                    
+                    usuario.setCelular(resultSet.getString("Celular"));//Opcional
+                    usuario.setCURP(resultSet.getString("CURP"));//Opcional
+                    
+                    usuario.setUserName(resultSet.getString("UserName"));
+                    
                     usuario.setSexo(resultSet.getString("Sexo"));
                     usuario.setFechaNacimiento(resultSet.getDate("FechaNacimiento"));
-                    usuario.Rol.setNombre(resultSet.getString("Rol"));
                     int idDireccion = resultSet.getInt("IdDireccion");
+                    
                     if(idDireccion != 0){
                         usuario.Direcciones = new ArrayList<>();
 
@@ -137,9 +166,11 @@ public class UsuarioDAOImplementation implements IUsuario{
                             direccion.setIdDireccion(resultSet.getInt("idDireccion"));
                             direccion.setCalle(resultSet.getString("Calle"));
                             direccion.setNumeroExterior(resultSet.getString("NumeroExterior")); 
+                            direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
 
                             direccion.Colonia.setNombre(resultSet.getString("Colonia"));
-
+                            direccion.Colonia.setCodigoPostal(resultSet.getString("CodigoPostal"));
+                            
                             direccion.Colonia.Municipio.setNombre(resultSet.getString("Municipio"));
 
                             direccion.Colonia.Municipio.Estado.setNombre(resultSet.getString("Estado"));
@@ -152,7 +183,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                     resultado.object = usuario;
                 }else{
                    resultado.correcto = false;
-                    resultado.mensajeError = "El usuario con ese id no existe";
+                   resultado.mensajeError = "El usuario con ese id no existe";
                 }
 
                 
@@ -174,7 +205,7 @@ public class UsuarioDAOImplementation implements IUsuario{
         Resultado resultado = new Resultado();
         
         try {
-            jdbcTemplate.execute("{CALL UsuarioDireccionADDSP(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
+            jdbcTemplate.execute("{CALL UsuarioDireccionADDSP(?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
                 
                 //Agregar usuario
                 
@@ -188,14 +219,51 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.setString(8, usuario.getSexo());
                 callableStatement.setString(9, usuario.getTelefono());
                 callableStatement.setString(10, usuario.getCelular());
-                callableStatement.setString(11, usuario.getCURP());
+                callableStatement.setString(11, usuario.getCURP().toUpperCase());
                 callableStatement.setInt(12, usuario.Rol.getIdRol());
                 
+                //Agregar imagen si existe
+                callableStatement.setString(13, usuario.getImagen());
+                
                 //Agregar direccion
+                callableStatement.setString(14, usuario.Direcciones.get(0).getCalle());
+                callableStatement.setString(15, usuario.Direcciones.get(0).getNumeroInterior());
+                callableStatement.setString(16, usuario.Direcciones.get(0).getNumeroExterior());
+                callableStatement.setInt(17, usuario.Direcciones.get(0).Colonia.getIdColonia());
+                
+                
+                
+                callableStatement.execute();
                 
                 
                 return true;
             });
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        
+        
+        return resultado;
+    }
+
+    @Override
+    public Resultado Delete(int IdUsuario) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            jdbcTemplate.execute("{CALL UsuarioDireccionDeleteSP(?)}",(CallableStatementCallback<Boolean>)callableStatement->{
+                callableStatement.setInt(1, IdUsuario);
+                
+                callableStatement.execute();
+                
+                return true;
+            });
+            
             
             resultado.correcto = true;
         } catch (Exception ex) {

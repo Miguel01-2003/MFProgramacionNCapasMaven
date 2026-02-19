@@ -71,10 +71,10 @@ public class Usuario {
     private String Celular;
     
     
-    @Pattern.List({
-        @Pattern(regexp = "")
-    })
-    @Size(min = 18, message = "La curp contiene 18 caracteres")
+//    @Pattern.List({
+//        @Pattern(regexp = "")
+//    })
+    @Size(min = 18, max=18, message = "La curp contiene 18 caracteres")
     private String CURP;
     
     @Valid
@@ -82,6 +82,8 @@ public class Usuario {
     
     
     public List<Direccion> Direcciones;
+    
+    private String Imagen;
     
     //getters
     public int getIdUsuario(){
@@ -140,6 +142,10 @@ public class Usuario {
         return Rol;
     }
     
+    public String getImagen(){
+        return Imagen;
+    }
+    
     
     
     //Setters
@@ -195,8 +201,12 @@ public class Usuario {
         this.Direcciones = Direcciones;
     }
     
-    public void SetRol(Rol Rol){
+    public void setRol(Rol Rol){
         this.Rol = Rol;
+    }
+    
+    public void setImagen(String Imagen){
+        this.Imagen = Imagen;
     }
     
     
@@ -221,6 +231,24 @@ public class Usuario {
         this.CURP = CURP;
         this.Rol = Rol;
         this.Direcciones = Direcciones;
+    }
+
+    public Usuario(int IdUsuario, String UserName, String Nombre, String ApellidoPaterno, String ApellidoMaterno, String Email, String Password, Date FechaNacimiento, String Sexo, String Telefono, String Celular, String CURP, Rol Rol, List<Direccion> Direcciones, String Imagen) {
+        this.IdUsuario = IdUsuario;
+        this.UserName = UserName;
+        this.Nombre = Nombre;
+        this.ApellidoPaterno = ApellidoPaterno;
+        this.ApellidoMaterno = ApellidoMaterno;
+        this.Email = Email;
+        this.Password = Password;
+        this.FechaNacimiento = FechaNacimiento;
+        this.Sexo = Sexo;
+        this.Telefono = Telefono;
+        this.Celular = Celular;
+        this.CURP = CURP;
+        this.Rol = Rol;
+        this.Direcciones = Direcciones;
+        this.Imagen = Imagen;
     }
     
     

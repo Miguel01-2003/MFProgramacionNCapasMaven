@@ -13,6 +13,11 @@ public class Estado {
     public String getNombre() {
         return Nombre;
     }
+    
+    public Pais getPais(){
+        return Pais;
+    }
+    
     //Setters
     public void setIdEstado(int IdEstado) {
         this.IdEstado = IdEstado;
@@ -22,8 +27,18 @@ public class Estado {
         this.Nombre = Nombre;
     }
     
+    public void setPais(Pais Pais){
+        this.Pais = Pais;
+    }
+    
     //Constructores
     public Estado() {
+    }
+
+    public Estado(int IdEstado, String Nombre, Pais Pais) {
+        this.IdEstado = IdEstado;
+        this.Nombre = Nombre;
+        this.Pais = Pais;
     }
     
     

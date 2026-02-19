@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Positive;
 
 public class Rol {
     
-    
-    
+      
     @Positive(message = "Seleccione algun rol")
     private int IdRol;   
     

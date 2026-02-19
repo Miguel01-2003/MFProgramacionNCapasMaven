@@ -5,7 +5,11 @@ import com.digis01.MFProgramacionNCapasMaven.ML.Usuario;
 
 public interface IUsuario {
     Resultado GetAll();
+    
     Resultado GetById(int IdUsuario);
     
     Resultado Add(Usuario usuario);
+    
+    Resultado Delete(int IdUsuario);
+    
 }

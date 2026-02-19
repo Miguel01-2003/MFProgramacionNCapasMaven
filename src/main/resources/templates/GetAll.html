@@ -7,21 +7,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <style>
+            body {
+                background-color: #143642;
+            }
+            
+            #contenedor{
+                padding: 3%;
+            }
+            
+            
+        </style>
     </head>
-    <body>
+    <body><br>
         <div class="container">
             <div class="row">
-                <div class="col-sm-7">
+                <div class="col">
                 <p class="fw-bold fs-5 text-center text-primary">Presione el boton para registrar un nuevo usuario</p>
                 </div>
-                <div class="col-sm-5">
-                    <button class="btn btn-success">Agregar usuario</button>
+                <div class="col-2">
+                    <a th:href="@{/usuario/form}"class="btn btn-success">
+                        <i class="bi bi-person-fill-add"></i>
+                        <strong>Agregar</strong>
+                    </a>
                 </div>
             </div>
             <table class="table">
                 <thead class="table-dark">
                     <tr>
                         <th>Acciones</th>
+                        <th>Imagen</th>
                         <th>Usuario</th>
                         <th>Datos de contacto</th>
                         <th>Direcciones</th>
@@ -31,23 +51,40 @@
                 <tbody>
                     <tr th:each="usuario : ${usuarios}">
                         <th>
-                            <button type="button" class="btn btn-outline-warning">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </button>
-                            <button type="button" class="btn btn-outline-danger">
-                                <i class="bi bi-trash3"></i> Eliminar
-                            </button>
+                            <a th:href="@{/usuario/GetById/{id}(id=${usuario.IdUsuario})}" 
+                                class="btn btn-warning">
+                                <i class="bi bi-eye-fill"></i>
+                                <strong>Detalles</strong>
+                            </a>
+                            <br><br>
+                            <form th:action="@{/usuario/delete/{id}(id=${usuario.IdUsuario})}" method="post">
+                                <button class="btn btn-danger" type="button" id="eliminarBoton">
+                                     <i class="bi bi-trash3-fill"></i>
+                                    <strong>Eliminar</strong>
+                                </button>
+                            </form>
                         </th>
-                        <td th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|">
-                            
+                        <td>
+                            <img th:if="${usuario.Imagen}"  th:src="'data:image/png;base64,' +${usuario.Imagen}" class="img-thumbnail" style="max-width: 50px">
+                            <img th:unless="${usuario.Imagen}" src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" class="img-thumbnail" style="max-width: 50px">
+                        </td>
+                         <td >
+                             <p><strong th:text="${usuario.ApellidoMaterno}? |${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}| : |${usuario.Nombre} ${usuario.ApellidoPaterno}|"></strong></p>
+                             <p><i class="bi bi-person-vcard"></i><small th:text="|  ${usuario.UserName}|"></small></p>
+                             <p th:if="${usuario.Sexo == 'MA'}" class="text-primary"><i class="bi bi-gender-male"></i><small th:text="|  Masculino|"></small></p>
+                             <p th:if="${usuario.Sexo == 'FE'}" class="text-danger"><i class="bi bi-gender-female"></i><small th:text="|  Femenino|"></small></p>
+                             <p><i class="bi bi-calendar-event"></i><small th:text="|  ${usuario.FechaNacimiento}|"></small></p>
+                             
                         </td>
                         <td>
-                            <lb class="" th:text="${usuario.email}"></lb><br>
-                            <lb class="" th:text="${usuario.Telefono}"></lb>
+                            <p><i class="bi bi-envelope-at"></i><small th:text="|  ${usuario.email}|"></small></p>
+                            <p><i class="bi bi-telephone"></i><small th:text="|  ${usuario.Telefono}|"></small></p>
+                            <p th:if="${usuario.Celular}" ><i class="bi bi-phone"></i><small th:text="|  ${usuario.Celular}|"></small></p>
+                            <p th:if="${usuario.CURP}"><i class="bi bi-file-earmark-text"></i><small th:text="|  ${usuario.CURP}|"></small></p>
                         </td>
                         <td>
-                            <div th:each="direccion: ${usuario.direcciones}">
-                                <lb class="" th:text="|Calle: ${direccion.Calle} ${direccion.NumeroExterior} ${direccion.Colonia.nombre} |"></lb>
+                            <div th:each="direccion, stat: ${usuario.direcciones}">
+                                <lb class="" th:text="|${stat.count}.-  Calle: ${direccion.Calle} ${direccion.NumeroExterior} ${direccion.Colonia.nombre} |"></lb>
                             </div>
                         </td>
                     </tr>
@@ -55,6 +92,36 @@
                 </tbody>
             </table>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+        
+    </body><!-- comment -->
+    <script>
+        document.querySelectorAll("#eliminarBoton").forEach(btn => {
+
+            btn.addEventListener("click", function(){
+
+                const form = this.closest("form");
+
+                Swal.fire({
+                    title: "¿Eliminar usuario?",
+                    text: "¡No podrás deshacer esta acción!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: "Sí, borralo"
+                }).then(result => {
+                    if(result.isConfirmed){
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+        
+        
+    </script>
 </html>

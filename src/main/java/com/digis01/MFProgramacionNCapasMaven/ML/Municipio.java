@@ -15,6 +15,10 @@ public class Municipio {
         return Nombre;
     }
     
+    public Estado getEstado(){
+        return Estado;
+    }
+    
     //Setters
     public void setIdMunicipio(int IdMunicipio){
         this.IdMunicipio = IdMunicipio;
@@ -24,9 +28,21 @@ public class Municipio {
         this.Nombre = Nombre;
     }
     
+    public void setEstado(Estado Estado){
+        this.Estado = Estado;
+    }
+    
     //Constructores
     
     public Municipio(){
         
     }
+
+    public Municipio(int IdMunicipio, String Nombre, Estado Estado) {
+        this.IdMunicipio = IdMunicipio;
+        this.Nombre = Nombre;
+        this.Estado = Estado;
+    }
+    
+    
 }

@@ -24,6 +24,10 @@ public class Direccion {
         return NumeroExterior;
     }
     
+    public Colonia getColonia(){
+        return Colonia;
+    }
+    
     //Setters
     public void setIdDireccion(int IdDireccion){
         this.IdDireccion = IdDireccion;
@@ -41,8 +45,22 @@ public class Direccion {
         this.NumeroExterior = NumeroExterior;
     }
     
+    public void setColonia(Colonia Colonia){
+        this.Colonia = Colonia;
+    }
+    
     //Constructor
     public Direccion(){
         
     }
+
+    public Direccion(int IdDireccion, String Calle, String NumeroInterior, String NumeroExterior, Colonia Colonia) {
+        this.IdDireccion = IdDireccion;
+        this.Calle = Calle;
+        this.NumeroInterior = NumeroInterior;
+        this.NumeroExterior = NumeroExterior;
+        this.Colonia = Colonia;
+    }
+    
+    
 }

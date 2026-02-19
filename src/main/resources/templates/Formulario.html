@@ -31,20 +31,20 @@
     <br>
     
     <br>
-    <form method="post" th:object="${usuario}" th:action="@{/usuario/form}">
+    <form method="post" th:object="${usuario}" th:action="@{/usuario/form}" enctype="multipart/form-data">
         <div id="contenedor">
             <h4><i class="bi bi-people-fill"></i>Datos personales</h4><br>
             <div class="row">
-                <div class="col-2">
-                    <label for="FotoUsuario" class="form-label fw-bold">Foto del usuario</label>
-                    <img id="FotoUsuario" src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" class="img-thumbnail"> 
-                </div>
+                <div class="col">              
+                    <img id="FotoUsuario" style="max-width: 250px" src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" class="img-thumbnail"> 
+                </div>   
                 <div class="col">
-                    <!-- <button class="btn btn-outline-secondary" type="button" id="button-addon1">Navegador</button>
-                    <input type="text" class="form-control " placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1"> -->
-                </div>
+                    <label for="FotoUsuario" class="form-label fw-bold">Foto del usuario</label>
+                    <input type="file" class="form-control mb-2" name="imagenFile" id="imagenFile" accept="image/*" onchange="ValidacionImagen(event)">
+                </div>   
+                
             </div>
-            
+
             <br>
             
             <div class="row">
@@ -131,12 +131,12 @@
                 </div>
                 <div class="col">
                     <label for="Rol" class="form-label fw-bold">Rol</label><br>
-                    <select id="Rol" class="form-select" aria-label="Default select example">
-                        <option value="0" selected>Seleccione un rol...</option>
+                    <select id="Rol" class="form-select" aria-label="Default select example" th:field="*{Rol.IdRol}">
+                        <option value="0" selected >Seleccione un rol...</option>
                         <option th:each="Rol :${roles}" th:value="${Rol.IdRol}" th:text="${Rol.Nombre}"></option>
                     </select>
                     <span id="errorRol" style="color: red"></span>
-                    <span class="text-danger" th:if="${#fields.hasErrors('Rol')}" th:errors="*{Rol}"></span>
+                    <span class="text-danger" th:if="${#fields.hasErrors('Rol')}" th:errors="*{Rol.IdRol}"></span>
                 </div>
             </div>
         </div>
@@ -148,7 +148,7 @@
             <div class="row">   
                 <div class="col">
                     <label for="paisddl" class="form-label fw-bold">Pais</label><br>
-                    <select id="ddlpais" class="form-select" aria-label="Default select example">
+                    <select id="ddlpais" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.Estado.Pais.IdPais}">
                         <option value="0" selected>Selecciona un pais...</option>
                         <option th:each="pais : ${paises}" th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
                     </select>
@@ -156,15 +156,17 @@
                 </div>
                 <div class="col">
                     <label for="estadoddl" class="form-label fw-bold">Estado</label><br>
-                    <select id="ddlestado" class="form-select" aria-label="Default select example">
+                    <select id="ddlestado" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.Estado.IdEstado}">
                         <option value="0" selected>Seleccione un pais primero...</option>
+                        <option th:each="estado: ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}"></option>
                     </select>
                     <span id="errorddlestado" style="color: red"></span>
                 </div>
                 <div class="col">
                     <label for="Municipio" class="form-label fw-bold">Municipio</label>
-                    <select id="ddlmunicipio" class="form-select" aria-label="Default select example">
+                    <select id="ddlmunicipio" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.IdMunicipio}">
                         <option value="0" selected>Seleccione un estado primero...</option>
+                        <option th:each="municipio: ${municipios}" th:value="${municipio.IdMunicipio}" th:text="${municipio.Nombre}"></option>
                     </select>
                     <span id="errorddlmunicipio" style="color: red"></span>
                 </div>
@@ -173,19 +175,20 @@
             <div class="row">
                 <div class="col">
                     <label for="Colonia" class="form-label fw-bold">Colonia</label>
-                    <select id="ddlcolonia" class="form-select" aria-label="Default select example">
+                    <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.IdColonia}">
                         <option value="0" selected>Seleccione un municipio primero...</option>
+                        <option th:each="colonia : ${colonias}" th:value="${colonia.IdColonia}" th:text="${colonia.Nombre}"></option>
                     </select>
                     <span id="errorddlcolonia" style="color: red"></span>
                 </div>
                 <div class="col">
                     <label for="CodigoPostal" class="form-label fw-bold">Codigo Postal</label>
-                    <input id="CodigoPostal" type="text" class="form-control" placeholder="Codigo Postal">
+                    <input id="CodigoPostal" type="text" class="form-control" placeholder="Codigo Postal" th:field="*{Direcciones[0].colonia.CodigoPostal}">
                     <span id="errorCodigoPostal" style="color: red"></span>
                 </div>
                 <div class="col">
                     <label for="Calle" class="form-label fw-bold">Calle</label>
-                    <input id="Calle" type="text" class="form-control" placeholder="Calle">
+                    <input id="Calle" type="text" class="form-control" placeholder="Calle" th:field="*{Direcciones[0].Calle}">
                     <span id="errorCalle" style="color: red"></span>
                 </div>
             </div>
@@ -193,12 +196,12 @@
             <div class="row">
                 <div class="col">
                     <label for="NumeroInterior" class="form-label fw-bold">Numero Interior (Opcional)</label>
-                    <input id="NumeroInterior" type="text" class="form-control" placeholder="Numero Interior">
+                    <input id="NumeroInterior" type="text" class="form-control" placeholder="Numero Interior" th:field="*{Direcciones[0].NumeroInterior}">
                     <span id="errorNumeroInterior" style="color: red"></span>
                 </div>
                 <div class="col">
                     <label for="NumeroExterior" class="form-label fw-bold">Numero Exterior</label>
-                    <input id="NumeroExterior" type="text" class="form-control" placeholder="Numero Exterior">
+                    <input id="NumeroExterior" type="text" class="form-control" placeholder="Numero Exterior" th:field="*{Direcciones[0].NumeroExterior}">
                     <span id="errorNumeroExterior" style="color: red"></span>
                 </div>
                 <div class="col"></div>
@@ -361,11 +364,10 @@
                     
                 }else{
                     $("#CodigoPostal").val("");
-                }
-                
-                
+                } 
                 
             });
+            
             
         });
         
@@ -497,7 +499,21 @@
             
         }
             
+        ValidacionImagen = (event) =>{
+            var imagen = document.getElementById('FotoUsuario');
+            imagen.src = URL.createObjectURL(event.target.files[0]);
+            const archivo = document.getElementById('imagenFile');
             
+            if(archivo.files.length > 0){
+                for(const i = 0; i< archivo.files.length -1;i++){
+                    
+                    const tamañoArchivo = archivo.files.item(i).size;
+                    
+                    const file = Math.random((tamañoArchivo/1024));
+                    
+                }
+            }
+        };
             
     </script>
 </html>
