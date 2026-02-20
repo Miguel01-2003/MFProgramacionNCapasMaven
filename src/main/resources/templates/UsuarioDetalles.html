@@ -5,8 +5,11 @@
         <title>Detalles de usuario</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -30,31 +33,196 @@
     </head>
     <body>
         
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Launch demo modal
-            </button>
 
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    ...
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                  </div>
+        <!-- Modal de modificar datos de usuario -->
+        <div class="modal fade" id="modalUsuario">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5>Editar Usuario</h5>
+              </div>
+              <div class="modal-body">
+                  <form method="post" th:object="${usuario}" th:action="@{/usuario/GetById/{id}/editarUsuario(id = ${IdUsuario})}">
+                      <div class="row">
+                          <div class="col">
+                               <label for="Nombre" class="form-label fw-bold">Nombre</label>
+                                <input id="Nombre" class="form-control" placeholder="Nombre" th:value="${Nombre}" th:field="*{Nombre}" >
+                          </div>
+                          <div class="col">
+                               <label for="ApellidoPaterno" class="form-label fw-bold">Apellido Paterno</label>
+                                <input id="ApellidoPaterno" class="form-control" placeholder="Apellido Paterno" th:value="${ApellidoPaterno}" th:field="*{ApellidoPaterno}" >
+                          </div>
+                          <div class="col">
+                               <label for="ApellidoMaterno" class="form-label fw-bold">Apellido Materno</label>
+                                <input id="ApellidoMaterno" class="form-control" placeholder="Apellido Materno" th:value="${ApellidoMaterno}" th:field="*{ApellidoMaterno}" >
+                          </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                          <div class="col">
+                              <label for="Sexo" class="form-label fw-bold">Sexo</label><br>       
+                                <input type="radio" id="Hombre" name="Sexo" value="MA" th:field="*{Sexo}" th:checked="${Sexo == 'MA'}">
+                                <label for="Hombre">Hombre</label>
+                                <input type="radio" id="Mujer" name="Sexo" value="FE" th:field="*{Sexo}" th:checked="${Sexo == 'FE'}">
+                                <label for="Mujer">Mujer</label>
+                          </div>
+                          <div class="col">
+                              <label for="CURP" class="form-label fw-bold">CURP</label>
+                                <input id="CURP" class="form-control" placeholder="CURP" th:value="${CURP}" th:field="*{CURP}" >
+                          </div>
+                          <div class="col">
+                              <label for="FechaNacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
+                              <input id="FechaNacimiento" type="date" class="form-control" th:field="*{FechaNacimiento}" th:value="${FechaNacimiento}">
+                          </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                          <div class="col">
+                              <label for="UserName" class="form-label fw-bold">Username</label>
+                              <input id="UserName" type="text" class="form-control" placeholder="Username" th:field="*{UserName}" th:value="${UserName}">
+                          </div>
+                          <div class="col">
+                               <label for="Email" class="form-label fw-bold">Email</label>
+                               <input id="Email" type="email" class="form-control" placeholder="Email" th:field="*{Email}" th:value="${Email}">
+                          </div>
+                          <div class="col">
+                               <label for="Telefono" class="form-label fw-bold">Telefono (10 Digitos)</label>
+                                <input id="Telefono" type="text" class="form-control" placeholder="Telefono" th:field="*{Telefono}" th:value="${Telefono}">
+                          </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                          <div class="col">
+                              <label for="Celular" class="form-label fw-bold">Celular (10 Digitos)</label>
+                               <input id="Celular" type="text" class="form-control" placeholder="Celular" th:field="*{Celular}" th:value="${Celular}">
+                          </div>
+                          <div class="col">
+                              <label for="Rol" class="form-label fw-bold">Rol</label><br>
+                                <select id="Rol" class="form-select" aria-label="Default select example" th:field="*{Rol.IdRol}" th:value="${usuario.Rol.IdRol}" >
+                                    <option value="0" selected>Seleccione un rol...</option>
+                                    <option th:each="Rol :${roles}" th:value="${Rol.IdRol}" th:text="${Rol.Nombre}"></option>
+                                </select>
+                          </div>
+                      </div>
+                      <br><br>
+                      <div class="row">
+                          <center>
+                             <button class="btn btn-warning" type="submit">
+                                 <i class="bi bi-image-fill"></i><strong th:text="|  Editar datos|"></strong>
+                             </button>
+                            </center>
+                      </div>
+                  </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal de agregar direccion -->
+        <div class="modal fade" id="modalDireccion">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5>Agregar direccion</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" th:object="${direccion}" th:action="@{/usuario/GetById/{id}(id=${usuario.IdUsuario})}">
+                        <div class="row">
+                        <div class="col">
+                            <label for="paisddl" class="form-label fw-bold">Pais</label><br>
+                            <select id="ddlpais" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.Pais.IdPais}">
+                                <option value="0" selected>Selecciona un pais...</option>
+                                <option th:each="pais : ${paises}" th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="estadoddl" class="form-label fw-bold">Estado</label><br>
+                            <select id="ddlestado" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.IdEstado}">
+                                <option value="0" selected>Seleccione un pais primero...</option>
+                                <option th:each="estado: ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="Municipio" class="form-label fw-bold">Municipio</label>
+                            <select id="ddlmunicipio" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.IdMunicipio}">
+                                <option value="0" selected>Seleccione un estado primero...</option>
+                                <option th:each="municipio: ${municipios}" th:value="${municipio.IdMunicipio}" th:text="${municipio.Nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="Colonia" class="form-label fw-bold">Colonia</label>
+                            <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field="*{Colonia.IdColonia}">
+                                <option value="0" selected>Seleccione un municipio primero...</option>
+                                <option th:each="colonia : ${colonias}" th:value="${colonia.IdColonia}" th:text="${colonia.Nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="CodigoPostal" class="form-label fw-bold">Codigo Postal</label>
+                            <input id="CodigoPostal" type="text" class="form-control" placeholder="Codigo Postal" th:field="*{colonia.CodigoPostal}">
+                        </div>
+                        <div class="col">
+                            <label for="Calle" class="form-label fw-bold">Calle</label>
+                            <input id="Calle" type="text" class="form-control" placeholder="Calle" th:field="*{Calle}">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="NumeroInterior" class="form-label fw-bold">Numero Interior (Opcional)</label>
+                            <input id="NumeroInterior" type="text" class="form-control" placeholder="Numero Interior" th:field="*{NumeroInterior}">
+                        </div>
+                        <div class="col">
+                            <label for="NumeroExterior" class="form-label fw-bold">Numero Exterior</label>
+                    <input id="NumeroExterior" type="text" class="form-control" placeholder="Numero Exterior" th:field="*{NumeroExterior}">
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <center>
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="bi bi-person-fill-add">Agregar direccion</i>
+                            </button>
+                        </center>
+                    </div>
+                    
+                    </form>
+                    
                 </div>
               </div>
-            </div>  
+            </div>
+          </div>
         
-        <br>
+        <!-- Modal de modificar Imagen del usuario --> 
+        <div class="modal fade" id="modalImagen">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                      <h5>Editar Imagen</h5>
+                    </div>
+                    <form method="post" th:object="${usuario}" th:action="@{/usuario/GetById/{id}/editarImagen(id=${IdUsuario})}" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <center>
+                                <img th:if="${usuario.Imagen}"  th:src="'data:image/png;base64,' +${usuario.Imagen}" class="img-thumbnail" style="max-width: 270px;  max-height: 270px; width: 100%; height: auto;" id="FotoUsuario">
+                                 <img th:unless="${usuario.Imagen}" src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" class="img-thumbnail" style="max-width: 270px; max-height: 270px; width: 100%; height: auto;" id="FotoUsuario">
+                            </center>
+                            <br><br>
+                            <input type="file" class="form-control mb-2" name="imagenFile" id="imagenFile" accept="image/*" onchange="ValidacionImagen(event)">
+                                 <center>
+                                     <button class="btn btn-warning" type="submit">
+                                         <i class="bi bi-image-fill"></i><strong th:text="|  Editar Imagen|"></strong>
+                                     </button>
+                                 </center>
+                        </div>
+                        
+                    </form>
+                </div> 
+            </div>
+        </div>
+        
+        <br><!-- Interfaz general -->
         <div class="container" id="contenedor">
             <div class="row">
                 <h1>Datos del Usuario</h1>
@@ -113,10 +281,10 @@
             </div>
             <div class="row" >
                 <div class="col-3">
-                    <center><button class="btn btn-warning" ><i class="bi bi-image-fill"></i><strong th:text="|  Editar Imagen|"></strong></button></center>
+                    <center><button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalImagen"><i class="bi bi-image-fill"></i><strong th:text="|  Editar Imagen|"></strong></button></center>
                 </div>
                 <div class="col-9" >
-                    <center><button class="btn btn-warning" ><i class="bi bi-person-fill-gear"></i> <strong th:text="|  Editar datos del usuario|"></strong></button></center>
+                    <center><button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalUsuario"><i class="bi bi-person-fill-gear"></i> <strong th:text="|  Editar datos del usuario|"></strong></button></center>
                 </div>
             </div>
         </div>
@@ -127,9 +295,9 @@
                     <h4>Direcciones: </h4>
                 </div>
                 <div class="col-2">
-                    <a href=" " class="btn btn-success">
-                        <i class="bi bi-building-fill-add"></i> <strong>Agregar direccion</strong>
-                </a>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDireccion">
+                         <i class="bi bi-building-fill-add"></i> <strong>Agregar direccion</strong>
+                    </button>
                 </div>
             </div>
             
@@ -165,10 +333,9 @@
                     <p th:if="${direccion.NumeroInterior}"><strong th:text="|  ${direccion.NumeroInterior}|"></strong></p>
                 </div>
                 <div class="col">
-                    <a  href=" "
-                       class="btn btn-warning">
+                    <button class="btn btn-warning" th:attr="data-id=${direccion.IdDireccion}">
                         <i class="bi bi-pencil-square"></i> <strong>Editar</strong>
-                    </a>
+                    </button>
                     <br><br>
                     <form th:action="@{/usuario/GetById/{id}/delete/{idDireccion}(id=${usuario.IdUsuario}, idDireccion =${direccion.IdDireccion})}" method="post">
                         <button class="btn btn-danger" type="button" id="eliminarDireccionBoton">
@@ -182,6 +349,155 @@
     </body>
     <script>
         
+        $(document).ready(function (){
+            //Detecta cuando se termino de cargar la pagina
+            console.log("Pagina cargada");
+            
+            
+            
+            
+            $("#ddlpais").change(function() {
+                //Detecta un cambio en la DDl de pais
+                console.log("Cambio en el DDL de pais");
+                
+                var IdPais = $("#ddlpais").val();
+                
+                if(IdPais != 0){
+                    $.ajax({
+                        url: "/usuario/getEstadosByPais/"+IdPais,
+                        type: "GET",
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            
+                            console.log("Seleccion correcta");
+                            
+                            $("#ddlestado").empty();
+                            $("#ddlestado").append("<option value=0 selected>Seleccione un estado...</option>");
+                            $.each(data.objects, function (i,estado){
+                                $("#ddlestado").append("<option value="+ estado.IdEstado+">"+estado.Nombre+"</option>");
+                            });
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            
+                            alert("No se pudo realizar la tarea (Pais)");
+                            
+                        }
+                    });
+                    
+                    
+                    
+                }else{
+                    $("#ddlestado").empty();
+                    $("#ddlestado").append("<option value=0 selected>Seleccione un pais primero...</option>");
+                    
+                    $("#ddlmunicipio").empty();
+                    $("#ddlmunicipio").append("<option value=0 selected>Seleccione un estado primero...</option>");
+                        
+                    $("#ddlcolonia").empty();
+                    $("#ddlcolonia").append("<option value=0 selected>Seleccione un municipio primero...</option>");
+                    
+                    $("#CodigoPostal").val("");
+                }
+                
+                
+                
+            });
+            
+            $("#ddlestado").change(function (){
+                var IdPais = $("#ddlpais").val();
+                var IdEstado = $("#ddlestado").val();
+                    if(IdEstado != 0){
+                        $.ajax({
+                            url:"/usuario/getEstadosByPais/"+IdPais+"/"+IdEstado,
+                            type: "GET",
+                            dataType: 'json',
+                            success: function (data, textStatus, jqXHR) {
+                                
+                                console.log("Seleccion de estado correcta");
+                                $("#ddlmunicipio").empty();
+                                $("#ddlmunicipio").append("<option value=0 selected>Seleccione un municipio...</option>");
+                                $.each(data.objects, function (i, municipio){
+                                     $("#ddlmunicipio").append("<option value="+municipio.IdMunicipio+">"+municipio.Nombre+"</option>");
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                    
+                                alert("No se pudo realizar la tarea (Estado)");    
+                            }
+                        });
+                        
+                        
+                    }else{
+                        $("#ddlmunicipio").empty();
+                        $("#ddlmunicipio").append("<option value=0 selected>Seleccione un estado primero...</option>");
+                        
+                        $("#ddlcolonia").empty();
+                        $("#ddlcolonia").append("<option value=0 selected>Seleccione un municipio primero...</option>");
+                        
+                        $("#CodigoPostal").val("");
+                        
+                    }
+            });
+            
+            
+            $("#ddlmunicipio").change(function (){
+                var IdPais = $("#ddlpais").val();
+                var IdEstado = $("#ddlestado").val();
+                var IdMunicipio = $("#ddlmunicipio").val();
+                
+                
+                if(IdMunicipio != 0){
+                    
+                    $.ajax({
+                        url:"/usuario/getEstadosByPais/"+IdPais+"/"+IdEstado+"/"+IdMunicipio,
+                        type: "GET",
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            
+                            console.log("Seleccion de municipio correcta");
+                            $("#ddlcolonia").empty();
+                            $("#ddlcolonia").append("<option value=0 selected>Seleccione una colonia...</option>");
+                            $.each(data.objects, function (i, colonia){
+                                $("#ddlcolonia").append("<option value="+colonia.IdColonia+"  data-cp="+colonia.CodigoPostal+">"+colonia.Nombre+"</option>");
+                                
+                            });
+                            
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                        
+                            alert("No se pudo realizar la tarea (Municipio)");    
+                        }
+                    });
+                    
+                    
+                }else{
+                    $("#ddlcolonia").empty();
+                    $("#ddlcolonia").append("<option value=0 selected>Seleccione un municipio primero...</option>");
+                    
+                    $("#CodigoPostal").val("");
+                }
+            });
+            
+            $("#ddlcolonia").change(function (){
+                var IdPais = $("#ddlpais").val();
+                var IdEstado = $("#ddlestado").val();
+                var IdMunicipio = $("#ddlmunicipio").val();
+                var IdColonia = $("#ddlcolonia").val();
+                
+                if(IdColonia != 0){
+                    
+                    var CodigoPostal = $("#ddlcolonia").find(':selected').data('cp');
+                    $("#CodigoPostal").val(CodigoPostal);
+                    
+                }else{
+                    $("#CodigoPostal").val("");
+                } 
+                
+            });
+            
+            
+        });
+
         document.querySelectorAll("#eliminarDireccionBoton").forEach(btn => {
  
             btn.addEventListener("click", function(){
@@ -206,6 +522,24 @@
             });
 
         });
+        
+        ValidacionImagen = (event) =>{
+            var imagen = document.getElementById('FotoUsuario');
+            imagen.src = URL.createObjectURL(event.target.files[0]);
+            const archivo = document.getElementById('imagenFile');
+            
+            if(archivo.files.length > 0){
+                for(const i = 0; i< archivo.files.length -1;i++){
+                    
+                    const tamañoArchivo = archivo.files.item(i).size;
+                    
+                    const file = Math.random((tamañoArchivo/1024));
+                    
+                }
+            }
+        };
+        
+        
             
     </script>
 </html>

@@ -84,6 +84,7 @@
                         </td>
                         <td>
                             <div th:each="direccion, stat: ${usuario.direcciones}">
+                                <i class="bi bi-geo-alt"></i>
                                 <lb class="" th:text="|${stat.count}.-  Calle: ${direccion.Calle} ${direccion.NumeroExterior} ${direccion.Colonia.nombre} |"></lb>
                             </div>
                         </td>

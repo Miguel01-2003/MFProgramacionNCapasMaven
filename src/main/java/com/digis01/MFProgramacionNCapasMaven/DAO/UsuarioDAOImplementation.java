@@ -10,6 +10,7 @@ import com.digis01.MFProgramacionNCapasMaven.ML.Colonia;
 import com.digis01.MFProgramacionNCapasMaven.ML.Municipio;
 import com.digis01.MFProgramacionNCapasMaven.ML.Estado;
 import com.digis01.MFProgramacionNCapasMaven.ML.Pais;
+import java.sql.Date;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -142,6 +143,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                     usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));//Opcional
                     usuario.setEmail(resultSet.getString("Email"));
                     usuario.setTelefono(resultSet.getString("Telefono"));
+                    usuario.Rol.setIdRol(resultSet.getInt("IdRol"));
                     usuario.Rol.setNombre(resultSet.getString("Rol"));
                     usuario.setImagen(resultSet.getString("Imagen"));
                     
@@ -275,5 +277,69 @@ public class UsuarioDAOImplementation implements IUsuario{
         
         
         return resultado;
+    }
+
+    @Override
+    public Resultado Update(Usuario usuario, int IdUsuario) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            
+            jdbcTemplate.execute("{CALL UsuarioUpdateSP(?,?,?,?,?,?,?,?,?,?,?,?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
+                callableStatement.setInt(1, IdUsuario);
+                callableStatement.setString(2, usuario.getNombre());
+                callableStatement.setString(3,usuario.getApellidoPaterno());
+                callableStatement.setString(4, usuario.getApellidoMaterno());
+                callableStatement.setDate(5, new java.sql.Date(usuario.getFechaNacimiento().getTime()));
+                callableStatement.setString(6, usuario.getUserName());
+                callableStatement.setString(7, usuario.getEmail());
+                callableStatement.setString(8, usuario.getSexo());
+                callableStatement.setString(9, usuario.getTelefono());
+                callableStatement.setString(10, usuario.getCelular());
+                callableStatement.setString(11, usuario.getCURP());
+                callableStatement.setInt(12, usuario.Rol.getIdRol());
+                
+                callableStatement.execute();
+                
+                return true;
+                
+            });
+            
+            
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        return resultado;
+    }
+
+    @Override
+    public Resultado UpdateImagen(String imagen, int IdUsuario) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            
+            jdbcTemplate.execute("{CALL UsuarioImagenUpdateSP(?,?)}", (CallableStatementCallback<Boolean>) callableStatement ->{ 
+            
+                callableStatement.setInt(1, IdUsuario);
+                callableStatement.setString(2, imagen);
+                
+                callableStatement.execute();                
+                
+                return true;
+            });            
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        return resultado;     
     }
 }

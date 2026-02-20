@@ -12,4 +12,7 @@ public interface IUsuario {
     
     Resultado Delete(int IdUsuario);
     
+    Resultado Update(Usuario usuario, int IdUsuario);
+    
+    Resultado UpdateImagen(String imagen, int IdUsuario);
 }

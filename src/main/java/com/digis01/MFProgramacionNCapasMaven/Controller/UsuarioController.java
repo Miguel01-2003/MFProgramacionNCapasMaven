@@ -99,8 +99,7 @@ public class UsuarioController {
     @GetMapping("form")
     public String Accion(Model model){
         model.addAttribute("usuario", new Usuario());
-        Resultado resultado = rolDAOImplementation.GetAll();
-        model.addAttribute("roles", resultado.objects);
+        model.addAttribute("roles", rolDAOImplementation.GetAll().objects);
         model.addAttribute("paises", paisDAOImplementation.GetAll().objects);
         return "Formulario";
     }
@@ -170,10 +169,97 @@ public class UsuarioController {
     @GetMapping("/GetById/{IdUsuario}")
     public String GetById(@PathVariable("IdUsuario") int IdUsuario, Model model){
         model.addAttribute("usuario", usuarioDAOImplementation.GetById(IdUsuario).object);
+        model.addAttribute("roles",rolDAOImplementation.GetAll().objects);
+        model.addAttribute("paises",paisDAOImplementation.GetAll().objects);
+        model.addAttribute("direccion", new Direccion());
         
         return "UsuarioDetalles";
     }
     
+    @PostMapping("/GetById/{IdUsuario}")
+    public String AddDireccion(@Valid @ModelAttribute("direccion")Direccion direccion, BindingResult bindingResult, @PathVariable("IdUsuario") int IdUsuario, Model model){
+        Resultado resultado = new Resultado();
+        
+        resultado = direccionDAOImplementation.Add(direccion, IdUsuario);
+        
+        if(resultado.correcto){
+            System.out.println("Direccion agregada correctamente");
+        }else{
+            System.out.println("Error al agregar direccion");
+            System.out.println("Mensaje de error: " + resultado.mensajeError);
+            System.out.println("ex: " + resultado.ex);
+        }
+        
+        return "redirect:/usuario/GetById/"+IdUsuario;
+    }
+    
+    @GetMapping("/GetById/{IdUsuario}/{IdDireccion}")
+    @ResponseBody
+    public Resultado GetDireccionesById(@PathVariable("IdDireccion") int IdDireccion){
+        
+        Resultado resultado = direccionDAOImplementation.GetById(IdDireccion);
+        
+        if(resultado.correcto){
+            System.out.println("Direccion obtenida");
+        }else{
+            System.out.println("Error al obtener direccion");
+            System.out.println("Mensaje de error: "+resultado.mensajeError);
+            System.out.println("ex: "+resultado.ex);
+        }
+        
+        return resultado;
+    }
+    
+    @PostMapping("/GetById/{IdUsuario}/editarImagen")
+    public String UpdateImagen(@PathVariable("IdUsuario") int IdUsuario, @RequestParam("imagenFile") MultipartFile imageFile){
+        
+        String[] nombreArchivo = imageFile.getOriginalFilename().split("\\.");
+        
+        String imagen = null;
+        
+            if(nombreArchivo[1].equals("jpg") || nombreArchivo[1].equals("png")){
+                
+                try {
+                    imagen = Base64.getEncoder().encodeToString(imageFile.getBytes());
+                    
+                } catch (Exception ex) {
+                    System.out.println("Problema con el archivo");
+                    System.out.println("Error: "+ex);
+                    return "Formulario";
+                }
+                
+            } else if(imageFile != null){
+                System.out.println("Archivo incorrecto");
+                return "redirect:/usuario/GetById/"+IdUsuario;
+            }
+            
+            Resultado resultado = usuarioDAOImplementation.UpdateImagen(imagen, IdUsuario);
+            
+            if(resultado.correcto){
+                System.out.println("Imagen modificada con exito");
+            }else{
+                System.out.println("Error al agregar direccion");
+                System.out.println("Mensaje de error: "+resultado.mensajeError);
+                System.out.println("ex: "+resultado.ex);
+            }
+            
+        return "redirect:/usuario/GetById/"+IdUsuario;
+    }
+    
+    @PostMapping("/GetById/{IdUsuario}/editarUsuario")
+    public String UpdateUsuario(@Valid @ModelAttribute("usuario")Usuario usuario, BindingResult bindingResult, @PathVariable("IdUsuario") int IdUsuario, Model model){
+        
+        Resultado resultado = usuarioDAOImplementation.Update(usuario, IdUsuario);
+        if(resultado.correcto){
+            System.out.println("Usuario modificado con exito");
+        }else{
+            System.out.println("Error al agregar direccion");
+            System.out.println("Mensaje de error: "+resultado.mensajeError);
+            System.out.println("ex: "+resultado.ex);
+        }
+        
+        return "redirect:/usuario/GetById/"+IdUsuario;
+    }
     
     @GetMapping("getEstadosByPais/{IdPais}")
     @ResponseBody

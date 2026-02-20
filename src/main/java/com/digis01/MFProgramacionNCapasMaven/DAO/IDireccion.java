@@ -7,4 +7,6 @@ public interface IDireccion {
     Resultado Add(Direccion direccion, int IdUsuario);
     
     Resultado Delete(int IdDireccion);
+    
+    Resultado GetById(int IdDireccion);
 }
