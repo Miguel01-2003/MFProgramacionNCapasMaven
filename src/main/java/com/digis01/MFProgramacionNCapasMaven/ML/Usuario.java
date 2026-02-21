@@ -2,7 +2,6 @@ package com.digis01.MFProgramacionNCapasMaven.ML;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.Date; 
@@ -12,12 +11,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Usuario {
     private int IdUsuario;
     
-    
+    @NotEmpty(message = "El nombre de usuario no puede estar vacio")
+    //@Pattern(regexp = "", message = "Debe contener solo letras y numero")
     private String UserName;
     
     @NotEmpty(message = "El nombre no debe estar vacio")
     @Size(min = 3, max = 50, message = "El nombre es muy corto")
-    
     private String Nombre;
     
     @NotEmpty(message = "El apellido paterno no debe estar vacio")
@@ -25,13 +24,15 @@ public class Usuario {
     private String ApellidoPaterno;
     
     
-    //Correccion para permitir nulo
-    @Size(min = 3, max = 50, message = "Apellido Invalido")
+    @Pattern.List({
+        @Pattern(regexp = "^$|^.{3,}$",message = "El apellido materno debe tener al menos 3 caracteres"),
+        @Pattern(regexp = "^$|^[\\p{Lu}].*$",message = "El apellido materno debe iniciar con una letra mayúscula"),
+        @Pattern(regexp = "^$|^[\\p{Lu}][\\p{Ll}]*$",
+                message = "El apellido materno solo debe contener minúsculas después de la primera letra")
+    })
     private String ApellidoMaterno;
     
     @NotEmpty(message = "El campo email puede estar vacio")
-    //@Email
-    //@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" , message = "Formato invalido")
     @Pattern.List({
         @Pattern(regexp = "^[^@]+@[^@]+$", message = "El correo debe contener un @"),
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" , message = "Formato invalido")
@@ -62,18 +63,13 @@ public class Usuario {
     
     
     @NotEmpty(message = "El telefono no debe estar vacio")
-    @Pattern(regexp = "^\\d+$", message = "El telefono solo debe contener numeros")
-    @Size(min = 10,max = 10, message = "El telefono debe contener 10 digitos")
+    @Pattern(regexp = "^$|[0-9]{10}$", message = "El telefono debe contener 10 numeros")
     private String Telefono; 
     
-    @Pattern(regexp = "^\\d+$", message = "El celular solo debe contener numeros")
-    @Size(max = 10, message = "El celular debe contener 10 digitos")
+    @Pattern(regexp = "^$|[0-9]{10}$", message = "El celular solo debe contener 10 numeros")
     private String Celular;
     
     
-//    @Pattern.List({
-//        @Pattern(regexp = "")
-//    })
     @Size(min = 18, max=18, message = "La curp contiene 18 caracteres")
     private String CURP;
     

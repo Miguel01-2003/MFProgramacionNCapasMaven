@@ -29,6 +29,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -80,7 +81,8 @@ public class UsuarioController {
     }
     
     @PostMapping("/GetById/{IdUsuario}/delete/{IdDireccion}")
-    public String DeleteDireccion(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario){
+    public String DeleteDireccion(@PathVariable("IdDireccion") int IdDireccion, 
+            @PathVariable("IdUsuario") int IdUsuario){
         
         Resultado resultado = direccionDAOImplementation.Delete(IdDireccion);
         
@@ -105,7 +107,8 @@ public class UsuarioController {
     }
     
     @PostMapping("/form")
-    public String Accion(@Valid @ModelAttribute("usuario")Usuario usuario, BindingResult bindingResult, @RequestParam("imagenFile") MultipartFile imageFile ,Model model){
+    public String Accion(@Valid @ModelAttribute("usuario")Usuario usuario, BindingResult bindingResult, 
+            @RequestParam("imagenFile") MultipartFile imageFile ,Model model, RedirectAttributes redirectAttributes){
         
         if(bindingResult.hasErrors()){
             model.addAttribute("usuario", usuario);
@@ -133,14 +136,15 @@ public class UsuarioController {
             return "Formulario";
         }
         
-        
-        String[] nombreArchivo = imageFile.getOriginalFilename().split("\\.");
+        //Validar Imagen
+        if(imageFile != null){
+            String[] nombreArchivo = imageFile.getOriginalFilename().split("\\.");
        
             if(nombreArchivo[1].equals("jpg") || nombreArchivo[1].equals("png")){
                 
                 try {
-                    
-                    usuario.setImagen(Base64.getEncoder().encodeToString(imageFile.getBytes()));
+                    String imagen = Base64.getEncoder().encodeToString(imageFile.getBytes());
+                    usuario.setImagen(imagen);
                     
                 } catch (Exception ex) {
                     System.out.println("Problema con el archivo");
@@ -152,17 +156,24 @@ public class UsuarioController {
                 System.out.println("Archivo incorrecto");
                 return "Formulario";
             }
-               
-
-            
-        Resultado resultado = usuarioDAOImplementation.Add(usuario);
-        
-        if(resultado.correcto = false){
-            System.out.println("Error al guardar los datos");
         }
+
+        //Resultado resultado = usuarioDAOImplementation.Add(usuario);
+        Resultado resultado = new Resultado();
+        resultado.correcto = true;
         
-        
-        return "redirect:/usuario";
+        if(resultado.correcto = true){
+            System.out.println("El usuario se guardo correctamente");
+            redirectAttributes.addFlashAttribute("mensajeExito", "Usuario agregado con exito");
+            return "redirect:/usuario";
+            
+        }else{
+            
+            System.out.println("Error al guardar los datos");
+            return "Formulario";
+            
+        }
+
     }
     
     
@@ -177,23 +188,26 @@ public class UsuarioController {
     }
     
     @PostMapping("/GetById/{IdUsuario}")
-    public String AddDireccion(@Valid @ModelAttribute("direccion")Direccion direccion, BindingResult bindingResult, @PathVariable("IdUsuario") int IdUsuario, Model model){
+    public String AddDireccion(@Valid @ModelAttribute("direccion")Direccion direccion, BindingResult bindingResult, 
+            @PathVariable("IdUsuario") int IdUsuario, Model model, RedirectAttributes redirectAttributes){
         Resultado resultado = new Resultado();
         
         resultado = direccionDAOImplementation.Add(direccion, IdUsuario);
         
         if(resultado.correcto){
             System.out.println("Direccion agregada correctamente");
+            redirectAttributes.addFlashAttribute("mensajeExito", "Direccion Agregada con exito");
         }else{
             System.out.println("Error al agregar direccion");
             System.out.println("Mensaje de error: " + resultado.mensajeError);
             System.out.println("ex: " + resultado.ex);
+            redirectAttributes.addFlashAttribute("mensajeError", "Error al agregar la direccion "+ resultado.mensajeError);
         }
         
         return "redirect:/usuario/GetById/"+IdUsuario;
     }
     
-    @GetMapping("/GetById/{IdUsuario}/{IdDireccion}")
+    @GetMapping("/GetById/direccion/{IdDireccion}")
     @ResponseBody
     public Resultado GetDireccionesById(@PathVariable("IdDireccion") int IdDireccion){
         
@@ -210,52 +224,84 @@ public class UsuarioController {
         return resultado;
     }
     
+    @PostMapping("/GetById/{IdUsuario}/direccion/{IdDireccion}")
+    public String UpdateDireccion(@Valid @ModelAttribute("direccion")Direccion direccion, BindingResult bindingResult, 
+            @PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario,
+            Model model, RedirectAttributes redirectAttributes){
+        
+        Resultado resultado = direccionDAOImplementation.Update(direccion, IdDireccion);
+        
+        if(resultado.correcto){
+            System.out.println("Direccion actualizada correctamente");
+            redirectAttributes.addFlashAttribute("mensajeExito", "La direccion se actualizo correctamente");
+        }else{
+            System.out.println("Error al actualizar direccion");
+            System.out.println("Mensaje de error: " + resultado.mensajeError);
+            System.out.println("ex: " + resultado.ex);
+            redirectAttributes.addFlashAttribute("mensajeError", "Error al actualizar direccion "+resultado.mensajeError);
+        }
+        
+        return "redirect:/usuario/GetById/"+IdUsuario;
+    }
+    
+    
     @PostMapping("/GetById/{IdUsuario}/editarImagen")
-    public String UpdateImagen(@PathVariable("IdUsuario") int IdUsuario, @RequestParam("imagenFile") MultipartFile imageFile){
+    public String UpdateImagen(@PathVariable("IdUsuario") int IdUsuario, @RequestParam("imagenFile") MultipartFile imageFile,
+            RedirectAttributes redirectAttributes){
         
         String[] nombreArchivo = imageFile.getOriginalFilename().split("\\.");
         
         String imagen = null;
-        
-            if(nombreArchivo[1].equals("jpg") || nombreArchivo[1].equals("png")){
+        if(imageFile != null){
+            if(!nombreArchivo[0].isEmpty()){
+                if(nombreArchivo[1].equals("jpg") || nombreArchivo[1].equals("png")){
                 
-                try {
-                    imagen = Base64.getEncoder().encodeToString(imageFile.getBytes());
-                    
-                } catch (Exception ex) {
-                    System.out.println("Problema con el archivo");
-                    System.out.println("Error: "+ex);
-                    return "Formulario";
+                    try {
+                        imagen = Base64.getEncoder().encodeToString(imageFile.getBytes());
+
+                    } catch (Exception ex) {
+                        System.out.println("Problema con el archivo");
+                        System.out.println("Error: "+ex);
+                        return "Formulario";
+                    }
+                }else{
+                    System.out.println("Archivo incorrecto");
+                    redirectAttributes.addFlashAttribute("mensajeError","Formato de archivo incorrecto");
+                    return "redirect:/usuario/GetById/"+IdUsuario;
                 }
-                
-            } else if(imageFile != null){
-                System.out.println("Archivo incorrecto");
-                return "redirect:/usuario/GetById/"+IdUsuario;
             }
+        }
+        
+           
             
-            Resultado resultado = usuarioDAOImplementation.UpdateImagen(imagen, IdUsuario);
-            
-            if(resultado.correcto){
-                System.out.println("Imagen modificada con exito");
-            }else{
-                System.out.println("Error al agregar direccion");
-                System.out.println("Mensaje de error: "+resultado.mensajeError);
-                System.out.println("ex: "+resultado.ex);
-            }
+        Resultado resultado = usuarioDAOImplementation.UpdateImagen(imagen, IdUsuario);
+
+        if(resultado.correcto){
+            System.out.println("Imagen modificada con exito");
+            redirectAttributes.addFlashAttribute("mensajeExito", "Imagen actulizada con exito");
+        }else{
+            System.out.println("Error al agregar direccion");
+            System.out.println("Mensaje de error: "+resultado.mensajeError);
+            System.out.println("ex: "+resultado.ex);
+            redirectAttributes.addFlashAttribute("mensajeError","Error al actualizar la imagen " + resultado.mensajeError);
+        }
             
         return "redirect:/usuario/GetById/"+IdUsuario;
     }
     
     @PostMapping("/GetById/{IdUsuario}/editarUsuario")
-    public String UpdateUsuario(@Valid @ModelAttribute("usuario")Usuario usuario, BindingResult bindingResult, @PathVariable("IdUsuario") int IdUsuario, Model model){
+    public String UpdateUsuario(@Valid @ModelAttribute("usuario")Usuario usuario, BindingResult bindingResult, 
+            @PathVariable("IdUsuario") int IdUsuario, Model model, RedirectAttributes redirectAttributes){
         
         Resultado resultado = usuarioDAOImplementation.Update(usuario, IdUsuario);
         if(resultado.correcto){
             System.out.println("Usuario modificado con exito");
+            redirectAttributes.addFlashAttribute("mensajeExito", "Usuario actualizado con exito");
         }else{
             System.out.println("Error al agregar direccion");
             System.out.println("Mensaje de error: "+resultado.mensajeError);
             System.out.println("ex: "+resultado.ex);
+            redirectAttributes.addFlashAttribute("mensajeError", "Error al actualizar usuario "+ resultado.mensajeError);
         }
         
         return "redirect:/usuario/GetById/"+IdUsuario;
@@ -284,5 +330,7 @@ public class UsuarioController {
         
         return resultado;
     }
+    
+    
 }        
 

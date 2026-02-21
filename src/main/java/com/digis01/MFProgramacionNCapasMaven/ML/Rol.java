@@ -1,12 +1,11 @@
 package com.digis01.MFProgramacionNCapasMaven.ML;
 
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 
 public class Rol {
     
       
-    @Positive(message = "Seleccione algun rol")
+    @Min(value = 1, message = "Seleccione algun rol valido")
     private int IdRol;   
     
     private String Nombre;
@@ -34,4 +33,9 @@ public class Rol {
     public Rol(){
         
     }
+
+    public Rol(int IdRol, String Nombre) {
+        this.IdRol = IdRol;
+        this.Nombre = Nombre;
+    } 
 }

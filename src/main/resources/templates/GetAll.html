@@ -125,4 +125,13 @@
         
         
     </script>
+    
+    <script th:if="${mensajeExito}" th:inline="javascript">
+        Swal.fire({
+            title: "Exito",
+            text: [[${mensajeExito}]],
+            icon: "success"
+        });
+    </script> 
+    
 </html>

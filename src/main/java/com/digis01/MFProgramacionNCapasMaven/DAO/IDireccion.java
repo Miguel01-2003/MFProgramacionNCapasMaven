@@ -9,4 +9,6 @@ public interface IDireccion {
     Resultado Delete(int IdDireccion);
     
     Resultado GetById(int IdDireccion);
+    
+    Resultado Update(Direccion direccion, int IdDireccion);
 }
