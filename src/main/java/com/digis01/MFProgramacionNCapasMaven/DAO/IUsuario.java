@@ -15,4 +15,6 @@ public interface IUsuario {
     Resultado Update(Usuario usuario, int IdUsuario);
     
     Resultado UpdateImagen(String imagen, int IdUsuario);
+    
+    Resultado BuscarUsuario(Usuario usuario);
 }

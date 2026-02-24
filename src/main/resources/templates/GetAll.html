@@ -26,6 +26,37 @@
     </head>
     <body><br>
         <div class="container">
+            <form method="post" th:object="${usuario}" th:action="@{/usuario}" >
+                <div class="row">
+                    <div class="col">
+                        <label for="Nombre" class="form-label fw-bold">Nombre</label>
+                        <input id="Nombre" type="text" class="form-control" placeholder="Nombre" th:field="*{Nombre}">                       
+                    </div>
+                    <div class="col">
+                        <label for="Nombre" class="form-label fw-bold">Apellido Paterno</label>
+                        <input id="Nombre" type="text" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}">                        
+                    </div>
+                    <div class="col">
+                        <label for="Nombre" class="form-label fw-bold">Apellido Materno</label>
+                        <input id="Nombre" type="text" class="form-control" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">              
+                    </div>
+                    <div class="col">
+                        <label for="Rol" class="form-label fw-bold">Rol</label><br>
+                        <select id="Rol" class="form-select" aria-label="Default select example" th:field="*{Rol.IdRol}">
+                            <option value="0" selected >Seleccione un rol...</option>
+                            <option th:each="Rol :${roles}" th:value="${Rol.IdRol}" th:text="${Rol.Nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-search"> </i>
+                            <strong>Buscar</strong>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="container">
             <div class="row">
                 <div class="col">
                 <p class="fw-bold fs-5 text-center text-primary">Presione el boton para registrar un nuevo usuario</p>
@@ -94,7 +125,7 @@
             </table>
         </div>
         
-    </body><!-- comment -->
+    </body>
     <script>
         document.querySelectorAll("#eliminarBoton").forEach(btn => {
 
@@ -133,5 +164,13 @@
             icon: "success"
         });
     </script> 
+    
+    <script th:if="${mensajeError}" th:inline="javascript">
+        Swal.fire({
+            title: "Error",
+            text: [[${mensajeError}]],
+            icon: "error"
+        });
+    </script>
     
 </html>

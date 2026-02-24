@@ -342,4 +342,109 @@ public class UsuarioDAOImplementation implements IUsuario{
         
         return resultado;     
     }
+
+    @Override
+    public Resultado BuscarUsuario(Usuario user) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            
+            jdbcTemplate.execute("{CALL BuscarUsuarioDireccion(?,?,?,?,?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
+                
+                callableStatement.registerOutParameter(1, java.sql.Types.REF_CURSOR);
+                callableStatement.setString(2, user.getNombre());
+                callableStatement.setString(3, user.getApellidoPaterno());
+                callableStatement.setString(4, user.getApellidoMaterno());
+                callableStatement.setInt(5, user.Rol.getIdRol());
+                
+                callableStatement.execute();
+                
+                ResultSet resultSet = (ResultSet)callableStatement.getObject(1);
+                
+                resultado.objects = new ArrayList<>();
+                while(resultSet.next()){
+                    int IdUsuario = resultSet.getInt("IdUsuario");
+                    if(!resultado.objects.isEmpty() && IdUsuario == ((Usuario)(resultado.objects.get(resultado.objects.size()-1))).getIdUsuario()){
+                        Direccion direccion = new Direccion();
+                        direccion.Colonia = new Colonia();
+                        direccion.Colonia.Municipio = new Municipio();
+                        direccion.Colonia.Municipio.Estado = new Estado();
+                        direccion.Colonia.Municipio.Estado.Pais = new Pais();
+                        direccion.setIdDireccion(resultSet.getInt("IdDireccion"));
+                        direccion.setCalle(resultSet.getString("Calle"));
+                        direccion.setNumeroExterior(resultSet.getString("NumeroExterior")); 
+
+                        direccion.Colonia.setNombre(resultSet.getString("Colonia"));
+
+                        direccion.Colonia.Municipio.setNombre(resultSet.getString("Municipio"));
+
+                        direccion.Colonia.Municipio.Estado.setNombre(resultSet.getString("Estado"));
+
+                        direccion.Colonia.Municipio.Estado.Pais.setNombre(resultSet.getString("Pais"));
+
+                        ((Usuario) (resultado.objects.get(resultado.objects.size() -1))).Direcciones.add(direccion);
+                    }else{
+
+                        Usuario usuario = new Usuario();
+                        usuario.Rol = new Rol();
+                        usuario.setIdUsuario(IdUsuario);
+                        usuario.setNombre(resultSet.getString("Nombre"));
+                        usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
+                        usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));//Opcional
+                        usuario.setEmail(resultSet.getString("Email"));
+                        usuario.setTelefono(resultSet.getString("Telefono"));
+                        usuario.Rol.setNombre(resultSet.getString("Rol"));
+                        usuario.setImagen(resultSet.getString("Imagen"));
+
+                        usuario.setCelular(resultSet.getString("Celular"));//Opcional
+                        usuario.setCURP(resultSet.getString("CURP"));//Opcional
+
+                        usuario.setUserName(resultSet.getString("UserName"));
+
+                        usuario.setSexo(resultSet.getString("Sexo"));
+                        usuario.setFechaNacimiento(resultSet.getDate("FechaNacimiento"));
+                        int idDireccion = resultSet.getInt("IdDireccion");
+                        if(idDireccion != 0){
+                            usuario.Direcciones = new ArrayList<>();
+                            Direccion direccion = new Direccion();
+
+                            direccion.Colonia = new Colonia();
+                            direccion.Colonia.Municipio = new Municipio();
+                            direccion.Colonia.Municipio.Estado = new Estado();
+                            direccion.Colonia.Municipio.Estado.Pais = new Pais();
+
+                            direccion.setIdDireccion(idDireccion);
+                            direccion.setCalle(resultSet.getString("Calle"));
+                            direccion.setNumeroExterior(resultSet.getString("NumeroExterior")); 
+
+                            direccion.Colonia.setNombre(resultSet.getString("Colonia"));
+
+                            direccion.Colonia.Municipio.setNombre(resultSet.getString("Municipio"));
+
+                            direccion.Colonia.Municipio.Estado.setNombre(resultSet.getString("Estado"));
+
+                            direccion.Colonia.Municipio.Estado.Pais.setNombre(resultSet.getString("Pais"));
+
+
+                                usuario.Direcciones.add(direccion);
+                            }
+
+                            resultado.objects.add(usuario);
+                    }
+                }
+                
+                return true;
+            });
+            
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        
+        return resultado;
+    }
 }

@@ -60,11 +60,30 @@ public class UsuarioController {
     @GetMapping
     public String Index(Model model){
         Resultado resultado = usuarioDAOImplementation.GetAll();
+        model.addAttribute("usuario", new Usuario());
         model.addAttribute("usuarios", resultado.objects);
-        
+        model.addAttribute("roles", rolDAOImplementation.GetAll().objects);
+         
         return "GetAll";
     }
     
+    @PostMapping
+    public String Index(@ModelAttribute("usuario")Usuario usuario, RedirectAttributes redirectAttributes, Model model){
+        
+        Resultado resultado = usuarioDAOImplementation.BuscarUsuario(usuario);
+        if(!resultado.objects.isEmpty()){
+            model.addAttribute("usuarios", resultado.objects);
+            model.addAttribute("roles", rolDAOImplementation.GetAll().objects);
+             
+            redirectAttributes.addFlashAttribute("mensajeExito","Usuarios encontrados");
+            return "GetAll";
+        }else{
+            redirectAttributes.addFlashAttribute("mensajeError", "No se encontraron usuarios"+resultado.mensajeError);
+            return "GetAll";
+        }
+        
+        
+    }
     
     @PostMapping("/delete/{IdUsuario}")
     public String EliminiarUsuario(@PathVariable("IdUsuario") int IdUsuario){
@@ -127,8 +146,7 @@ public class UsuarioController {
                     
                     if(IdMunicipio != 0){
                         model.addAttribute("colonias", coloniaDAOImplementation.GetByMunicipio(IdMunicipio).objects);
-                        
-                        
+  
                     }
                 }
             }
