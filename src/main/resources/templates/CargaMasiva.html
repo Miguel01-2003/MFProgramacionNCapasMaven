@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Carga de archivos de datos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <br>
+        
+        <div class="container" id="mostrarFormulario">
+            <center>
+                 <button class="btn btn-primary" onclick="mostrarFormulario()">Mostrar formulario</button>
+            </center>
+            
+        </div>
+        
+        <br>
+        
+        <div class="container" id="botones" style="display:none">
+            <div class="row">
+                <div class="col">
+                    <center>
+                        <button class="btn btn-primary" id="btntxt">Subir txt</button>
+                    </center>
+                </div>
+                <div class="col">
+                    <center>
+                        <button class="btn btn-success" id="btnxlsx">Subir xlsx</button>
+                    </center>
+                </div>
+            </div>
+        </div>
+        
+        <br>
+        
+        <div class="container" id="formularioarchivo" style="display:none">
+            <form action="/usuario/cargamasiva" method="post" enctype="multipart/form-data">
+                <h3 id="titulo"></h3>
+                <div class="row">
+                    <div class="col">
+                        <input type="file" id="archivo" name="archivo" accept=".xlsx,.txt">
+                    </div>
+                    <div class="col">
+                        <button id="btnsubir" type="submit" class="btn btn-warning">
+                            <i class="bi bi-file-earmark-arrow-up"> </i>
+                            <strong>Subir archivo</strong>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="container" id="ingresoCorrecto" style="display:none" th:if="${llave}">
+            <div class="row">
+                <form method="get" th:action="@{'/usuario/cargamasiva/procesar/'+${llave}}">
+                    <center>
+                        <button class="btn btn-success">
+                            <i class="bi bi-floppy-fill"> </i>
+                            <strong>Guardar datos</strong>
+                        </button>
+                    </center>
+                </form>
+            </div>
+            <br>
+            <div class="row" th:each="usuario : ${usuarios}">
+                <div class="col">
+                    <p><strong th:text="${usuario.ApellidoMaterno}? |${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}| : |${usuario.Nombre} ${usuario.ApellidoPaterno}|"></strong></p>
+                     <p><i class="bi bi-person-vcard"></i><small th:text="|  ${usuario.UserName}|"></small></p>
+                     <p th:if="${usuario.Sexo == 'MA'}" class="text-primary"><i class="bi bi-gender-male"></i><small th:text="|  Masculino|"></small></p>
+                     <p th:if="${usuario.Sexo == 'FE'}" class="text-danger"><i class="bi bi-gender-female"></i><small th:text="|  Femenino|"></small></p>
+                </div>
+                <div class="col">
+                    <p><i class="bi bi-envelope-at"></i><small th:text="|  ${usuario.email}|"></small></p>
+                    <p><i class="bi bi-telephone"></i><small th:text="|  ${usuario.Telefono}|"></small></p>
+                    <p th:if="${usuario.Celular}" ><i class="bi bi-phone"></i><small th:text="|  ${usuario.Celular}|"></small></p>
+                    <p th:if="${usuario.CURP}"><i class="bi bi-file-earmark-text"></i><small th:text="|  ${usuario.CURP}|"></small></p>
+                </div>
+                <div class="col">
+                    <div th:each="direccion, stat: ${usuario.direcciones}">
+                        <i class="bi bi-geo-alt"></i>
+                        <lb class="" th:text="|${stat.count}.-  Calle: ${direccion.Calle} ${direccion.NumeroExterior} ${direccion.Colonia.IdColonia} |"></lb>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container" id="IngresoIncorrecto" style="display:none">
+            <div class="row" th:each="error : ${errores}">
+                <p><strong th:text="|Error en la fila: ${error.fila}  Objeto: ${error.dato}  Descripcion: ${error.descripcion}|"></strong></p>
+            </div>
+        </div>
+    </body>
+    <script>
+        function mostrarFormulario(){
+            document.getElementById("mostrarFormulario").style.display = "none";
+            document.getElementById("botones").style.display = "block";
+        }
+        
+        let tipoArchivo = "";
+        
+        document.getElementById("btnxlsx").addEventListener("click", function (){
+            tipoArchivo = "xlsx";
+            document.getElementById("formularioarchivo").style.display = "block";
+            document.getElementById("archivo").setAttribute("accept",".xlsx");
+            
+            document.getElementById("btnsubir").classList.remove("btn-warning");
+            document.getElementById("btnsubir").classList.add("btn-success");
+            document.getElementById("titulo").textContent = "Ingrese archivo de excel";
+        });
+        
+        document.getElementById("btntxt").addEventListener("click", function (){
+            tipoArchivo = "txt";
+            document.getElementById("formularioarchivo").style.display = "block";
+            document.getElementById("archivo").setAttribute("accept",".txt");
+            
+            document.getElementById("btnsubir").classList.remove("btn-warning");
+            document.getElementById("btnsubir").classList.add("btn-success");
+            document.getElementById("titulo").textContent = "Ingrese archivo de texto";
+        });
+        
+        document.getElementById("archivo").addEventListener("change", function(){
+            if(this.files.length > 0){
+                 var fileName = this.files[0].name;
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (fileExtension !== tipoArchivo) {
+                        alert("Por favor, seleccione un archivo " + tipoArchivo.toUpperCase() + " válido.");
+                        this.value = "";
+                    } 
+            }
+        });
+        
+    </script>
+    
+    <script th:if="${usuarios}" th:inline="javascript">
+        document.getElementById("ingresoCorrecto").style.display="block"; 
+        
+        document.getElementById("mostrarFormulario").style.display = "none";
+        document.getElementById("botones").style.display = "none";
+        document.getElementById("formularioarchivo").style.display = "none";
+        document.getElementById("")
+    </script>
+    
+    <script th:if="${errores}" th:inline="javascript">
+        
+        document.getElementById("IngresoIncorrecto").style.display="block"; 
+        document.getElementById("ingresoCorrecto").style.display="none"; 
+        
+        document.getElementById("mostrarFormulario").style.display = "none";
+        document.getElementById("botones").style.display = "none";
+        document.getElementById("formularioarchivo").style.display = "bloc";
+    </script>
+</html>

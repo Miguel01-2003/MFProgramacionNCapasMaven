@@ -1,0 +1,3 @@
+JPeldano1|Jose|Peldaño|Jimenez|jPJimenez@email.com|jpeldano1A|2001-12-12|MA|7443112345||paq7891erd234jen32|1|Azul|9b|12|56
+MSaldaña|Maria|Rosales|Saldana|MariaSal@gmail.com|Mrosales12|2004-05-09|FE|7819234560|1376245678||2|Venecia|13|889|12
+EJavier|Erik Javier|Arrieta|Torrez|erik@email.com|EJavier02|2001-10-11|MA|5567891234|1234567890|123asd123asd123asd|3|Nevada||12|67

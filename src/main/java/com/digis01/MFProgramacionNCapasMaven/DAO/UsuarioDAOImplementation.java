@@ -14,6 +14,7 @@ import java.sql.Date;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -73,6 +74,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                     usuario.setCURP(resultSet.getString("CURP"));//Opcional
                     
                     usuario.setUserName(resultSet.getString("UserName"));
+                    usuario.setStatus(resultSet.getInt("Status"));
                     
                     usuario.setSexo(resultSet.getString("Sexo"));
                     usuario.setFechaNacimiento(resultSet.getDate("FechaNacimiento"));
@@ -432,6 +434,78 @@ public class UsuarioDAOImplementation implements IUsuario{
                             resultado.objects.add(usuario);
                     }
                 }
+                
+                return true;
+            });
+            
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        
+        return resultado;
+    }
+
+    @Override
+    public Resultado AddAll(List<Usuario> usuarios) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            jdbcTemplate.batchUpdate("{CALL UsuarioDireccionADDSP(?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?)}",
+                usuarios,
+                usuarios.size(),
+                    (callableStatement, usuario) ->{
+                        callableStatement.setString(1, usuario.getNombre());
+                        callableStatement.setString(2, usuario.getApellidoPaterno());
+                        callableStatement.setString(3, usuario.getApellidoMaterno());
+                        callableStatement.setDate(4, new java.sql.Date(usuario.getFechaNacimiento().getTime()));
+                        callableStatement.setString(5, usuario.getUserName());
+                        callableStatement.setString(6, usuario.getEmail());
+                        callableStatement.setString(7, usuario.getPassword());
+                        callableStatement.setString(8, usuario.getSexo());
+                        callableStatement.setString(9, usuario.getTelefono());
+                        callableStatement.setString(10, usuario.getCelular());
+                        callableStatement.setString(11, usuario.getCURP().toUpperCase());
+                        callableStatement.setInt(12, usuario.Rol.getIdRol());
+
+                        //Agregar imagen si existe
+                        callableStatement.setString(13, usuario.getImagen());
+
+                        //Agregar direccion
+                        callableStatement.setString(14, usuario.Direcciones.get(0).getCalle());
+                        callableStatement.setString(15, usuario.Direcciones.get(0).getNumeroInterior());
+                        callableStatement.setString(16, usuario.Direcciones.get(0).getNumeroExterior());
+                        callableStatement.setInt(17, usuario.Direcciones.get(0).Colonia.getIdColonia());
+                        }
+                    );
+            
+            
+            
+            resultado.correcto = true;
+        } catch (Exception ex) {
+            resultado.correcto = false;
+            resultado.mensajeError = ex.getLocalizedMessage();
+            resultado.ex = ex;
+        }
+        
+        return resultado;
+        
+    }
+
+    @Override
+    public Resultado UpdateStatus(int idUsuario, int status) {
+        Resultado resultado = new Resultado();
+        
+        try {
+            jdbcTemplate.execute("{CALL UsuarioStatusUpdateSP(?,?)}",(CallableStatementCallback<Boolean>) callableStatement ->{
+                callableStatement.setInt(1, idUsuario);
+                callableStatement.setInt(2, status);
+                
+                callableStatement.execute();
                 
                 return true;
             });

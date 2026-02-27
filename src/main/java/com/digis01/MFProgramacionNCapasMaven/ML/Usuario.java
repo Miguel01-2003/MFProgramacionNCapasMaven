@@ -81,6 +81,8 @@ public class Usuario {
     
     private String Imagen;
     
+    private int Status;
+    
     //getters
     public int getIdUsuario(){
         return IdUsuario;
@@ -140,6 +142,10 @@ public class Usuario {
     
     public String getImagen(){
         return Imagen;
+    }
+    
+    public int getStatus(){
+        return Status;
     }
     
     
@@ -205,6 +211,10 @@ public class Usuario {
         this.Imagen = Imagen;
     }
     
+    public void setStatus(int Status){
+        this.Status = Status;
+    }
+    
     
     //Constructores
     public Usuario(){
@@ -245,6 +255,25 @@ public class Usuario {
         this.Rol = Rol;
         this.Direcciones = Direcciones;
         this.Imagen = Imagen;
+    }
+
+    public Usuario(int IdUsuario, String UserName, String Nombre, String ApellidoPaterno, String ApellidoMaterno, String Email, String Password, Date FechaNacimiento, String Sexo, String Telefono, String Celular, String CURP, Rol Rol, List<Direccion> Direcciones, String Imagen, int Status) {
+        this.IdUsuario = IdUsuario;
+        this.UserName = UserName;
+        this.Nombre = Nombre;
+        this.ApellidoPaterno = ApellidoPaterno;
+        this.ApellidoMaterno = ApellidoMaterno;
+        this.Email = Email;
+        this.Password = Password;
+        this.FechaNacimiento = FechaNacimiento;
+        this.Sexo = Sexo;
+        this.Telefono = Telefono;
+        this.Celular = Celular;
+        this.CURP = CURP;
+        this.Rol = Rol;
+        this.Direcciones = Direcciones;
+        this.Imagen = Imagen;
+        this.Status = Status;
     }
     
     
