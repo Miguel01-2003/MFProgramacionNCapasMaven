@@ -593,17 +593,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/actualizar/Status/{IdUsuario}/{Status}")
-    public String ActualizarStatusUsuario(@PathVariable("IdUsuario") int IdUsuario, @PathVariable("Status") int Status,RedirectAttributes redirectAttributes){
+    @ResponseBody
+    public Resultado ActualizarStatusUsuario(@PathVariable("IdUsuario") int IdUsuario, @PathVariable("Status") int Status){
         
         Resultado resultado = usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
         
-        if(resultado.correcto){
-            redirectAttributes.addFlashAttribute("mensajeExito", "Status actualizado");
-        }else{
-            redirectAttributes.addFlashAttribute("mensajeError", "Error al actualizar status: "+resultado.mensajeError);
-        }
-        
-        return "redirect:/usuario";
+        return resultado;
     }
 
 
