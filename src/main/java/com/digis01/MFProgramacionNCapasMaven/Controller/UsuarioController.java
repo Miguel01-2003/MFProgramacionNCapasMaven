@@ -2,11 +2,13 @@ package com.digis01.MFProgramacionNCapasMaven.Controller;
 
 import com.digis01.MFProgramacionNCapasMaven.DAO.ColoniaDAOImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.DireccionDAOImplementation;
+import com.digis01.MFProgramacionNCapasMaven.DAO.DireccionDAOJPAImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.EstadoDAOImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.MunicipioDAOImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.PaisDAOImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.RolDAOImplementation;
 import com.digis01.MFProgramacionNCapasMaven.DAO.UsuarioDAOImplementation;
+import com.digis01.MFProgramacionNCapasMaven.DAO.UsuarioDAOJPAImplementation;
 import com.digis01.MFProgramacionNCapasMaven.ML.Colonia;
 import com.digis01.MFProgramacionNCapasMaven.ML.Resultado;
 import com.digis01.MFProgramacionNCapasMaven.ML.Usuario;
@@ -81,11 +83,18 @@ public class UsuarioController {
     private DireccionDAOImplementation direccionDAOImplementation;
     
     @Autowired
+    private UsuarioDAOJPAImplementation usuarioDAOJPAImplementation;
+    
+    @Autowired
+    private DireccionDAOJPAImplementation direccionDAOJPAImplementation;
+    
+    @Autowired
     private ValidationService validationService;
 
     @GetMapping
     public String Index(Model model) {
-        Resultado resultado = usuarioDAOImplementation.GetAll();
+        //Resultado resultado = usuarioDAOImplementation.GetAll();
+        Resultado resultado = usuarioDAOJPAImplementation.GetAll();
         model.addAttribute("usuario", new Usuario());
         model.addAttribute("usuarios", resultado.objects);
         model.addAttribute("roles", rolDAOImplementation.GetAll().objects);
@@ -197,7 +206,8 @@ public class UsuarioController {
             }
         }
 
-        Resultado resultado = usuarioDAOImplementation.Add(usuario);
+        //Resultado resultado = usuarioDAOImplementation.Add(usuario);
+        Resultado resultado = usuarioDAOJPAImplementation.Add(usuario);
 
         if (resultado.correcto = true) {
             System.out.println("El usuario se guardo correctamente");
@@ -215,7 +225,8 @@ public class UsuarioController {
 
     @GetMapping("/GetById/{IdUsuario}")
     public String GetById(@PathVariable("IdUsuario") int IdUsuario, Model model) {
-        model.addAttribute("usuario", usuarioDAOImplementation.GetById(IdUsuario).object);
+        //model.addAttribute("usuario", usuarioDAOImplementation.GetById(IdUsuario).object);
+        model.addAttribute("usuario", usuarioDAOJPAImplementation.GetById(IdUsuario).object);
         model.addAttribute("roles", rolDAOImplementation.GetAll().objects);
         model.addAttribute("paises", paisDAOImplementation.GetAll().objects);
         model.addAttribute("direccion", new Direccion());
@@ -228,7 +239,8 @@ public class UsuarioController {
             @PathVariable("IdUsuario") int IdUsuario, Model model, RedirectAttributes redirectAttributes) {
         Resultado resultado = new Resultado();
 
-        resultado = direccionDAOImplementation.Add(direccion, IdUsuario);
+        //resultado = direccionDAOImplementation.Add(direccion, IdUsuario);
+        resultado = direccionDAOJPAImplementation.Add(direccion, IdUsuario);
 
         if (resultado.correcto) {
             System.out.println("Direccion agregada correctamente");
@@ -247,7 +259,8 @@ public class UsuarioController {
     @ResponseBody
     public Resultado GetDireccionesById(@PathVariable("IdDireccion") int IdDireccion) {
 
-        Resultado resultado = direccionDAOImplementation.GetById(IdDireccion);
+        //Resultado resultado = direccionDAOImplementation.GetById(IdDireccion);
+        Resultado resultado = direccionDAOJPAImplementation.GetById(IdDireccion);
 
         if (resultado.correcto) {
             System.out.println("Direccion obtenida");
@@ -265,7 +278,8 @@ public class UsuarioController {
             @PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario,
             Model model, RedirectAttributes redirectAttributes) {
 
-        Resultado resultado = direccionDAOImplementation.Update(direccion, IdDireccion);
+        //Resultado resultado = direccionDAOImplementation.Update(direccion, IdDireccion);
+        Resultado resultado = direccionDAOJPAImplementation.Update(direccion, IdDireccion);
 
         if (resultado.correcto) {
             System.out.println("Direccion actualizada correctamente");
